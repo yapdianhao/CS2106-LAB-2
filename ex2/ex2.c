@@ -18,11 +18,10 @@ compute cluster node (Linux on x86)
 #include <fcntl.h>      //For stat()
 #include <sys/types.h>   
 #include <sys/stat.h>
-//#include <sys/wait.h>   //for waitpid()
+#include <sys/wait.h>   //for waitpid()
 #include <unistd.h>     //for fork(), wait()
 #include <string.h>     //for string comparison etc
 #include <stdlib.h>     //for malloc()
-
 
 char** split( char* input, char* delimiter, int maxTokenNum, int* readTokenNum )
 //Assumptions:
@@ -88,6 +87,34 @@ void freeTokenArray(char** strArr, int size)
     //      afterwards
 }
 
+// handles "showpath"
+void showPath(char path[]) {
+    printf("%s\n", path);
+}
+
+// handles "setpath $PATH"
+void setPath(char path[], char* newPath) {
+    strcpy(path, newPath);
+}
+
+// runs everything else
+void runCommand(char* commandName, char* path) {
+    char* wholePath = malloc(strlen(commandName) + strlen(path) + 2);
+    strcpy(wholePath, path);
+    strcat(wholePath, "/");
+    strcat(wholePath, commandName);
+    struct stat *statbuf = malloc(sizeof(struct stat));
+    if (stat(wholePath, statbuf) != 0) {
+        printf("%s not found\n", commandName);
+    } else {
+        if (fork() == 0) {
+            execl(wholePath, commandName, (char*)0);
+            exit(0);
+        } else {
+            wait(NULL);
+        }
+    }
+}
 
 int main()
 {
@@ -112,7 +139,15 @@ int main()
     while ( strcmp( cmdLineArgs[0], "quit") != 0 ){
 
         //Figure out which command the user want and implement below
-
+        char* command = cmdLineArgs[0];
+        if (strcmp(command, "showpath") == 0) {
+            showPath(path);
+        } else if (strcmp(command, "setpath") == 0) {
+            char* newPath = cmdLineArgs[1];
+            setPath(path, newPath);
+        } else {
+            runCommand(command, path);
+        }
 
         //Prepare for next round input
 
