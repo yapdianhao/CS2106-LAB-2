@@ -105,7 +105,7 @@ void runCommand(char* commandName, char* path) {
     strcat(wholePath, commandName);
     struct stat *statbuf = malloc(sizeof(struct stat));
     if (stat(wholePath, statbuf) != 0) {
-        printf("%s not found\n", commandName);
+        printf("\"%s/%s\" not found\n", path, commandName);
     } else {
         if (fork() == 0) {
             execl(wholePath, commandName, (char*)0);
