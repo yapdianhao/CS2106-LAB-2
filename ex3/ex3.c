@@ -87,6 +87,14 @@ void freeTokenArray(char** strArr, int size)
     //      afterwards
 }
 
+void showPath(char path[]) {
+    printf("%s\n", path);
+}
+
+void setPath(char path[], char* newPath) {
+    strcpy(path, newPath);
+}
+
 void runCommandAndWaitResult(char** argv, char* commandName, char* path, int* result) {
     char* wholePath = malloc(strlen(commandName) + strlen(path) + 2);
     strcpy(wholePath, path);
@@ -186,6 +194,11 @@ int main()
         } else if (strcmp(command, "pc") == 0) {
             // pc
             printChildProcess(pidArr);
+        } else if (strcmp(command, "showpath") == 0) {
+            showPath(path);
+        } else if (strcmp(command, "setpath") == 0) {
+            char* newPath = cmdLineArgs[1];
+            setPath(path, newPath);
         } else {
             if (strcmp(cmdLineArgs[tokenNum - 1], "&") == 0) {
                 runCommandWithoutWait(cmdLineArgs, command, path, pidArr, numberOfPids);
