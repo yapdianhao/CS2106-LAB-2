@@ -135,7 +135,10 @@ void runCommandWithoutWait(char** argv, char* commandName, char* path, pid_t pid
 
 void waitForChild(int childPid, int pidArr[], int* result) {
     int wstatus;
-    waitpid(childPid, &wstatus, 0);
+    int pidFound = waitpid(childPid, &wstatus, 0);
+    if (pidFound == -1) {
+        printf("%d is not a valid child pid\n", childPid);
+    }
     *result = WEXITSTATUS(wstatus);
     for (int i = 0; i < 10; i++) {
         if (pidArr[i] == childPid) {
@@ -201,7 +204,11 @@ int main()
             setPath(path, newPath);
         } else {
             if (strcmp(cmdLineArgs[tokenNum - 1], "&") == 0) {
-                runCommandWithoutWait(cmdLineArgs, command, path, pidArr, numberOfPids);
+                char** newArr = (char**) malloc(sizeof(char*) * tokenNum - 1 );
+                for (int i = 0; i < tokenNum - 1; i++) {
+                    newArr[i] = cmdLineArgs[i];
+                }
+                runCommandWithoutWait(newArr, command, path, pidArr, numberOfPids);
                 numberOfPids++;
             } else {
                 runCommandAndWaitResult(cmdLineArgs, command, path, &result);
