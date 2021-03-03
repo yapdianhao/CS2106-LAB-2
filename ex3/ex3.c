@@ -1,8 +1,8 @@
 /*************************************
 * Lab 2 Exercise 3
 * Name:
-* Student Id: A????????
-* Lab Group: B??
+* Student Id: A0184679H
+* Lab Group: B13
 *************************************
 Note: Duplicate the above and fill in 
 for the 2nd member if  you are on a team
